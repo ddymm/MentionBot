@@ -19,6 +19,17 @@
   * Активировать чекбокс `Enable Events`.
   * В разделе `Subscribe to bot events` добавить ивент `app_mention`.
 
+* Установка виртуального окружения и зависимостей:
+  ```bash  
+  virtualenv /путь/до/репозитория/venv -p python3 # Python 3.6+ required
+  source venv/bin/activate
+  pip install -r requirements.txt
+  ```
+* Запуск бота:
+  ```bash  
+  ./venv/bin/python ./main.py
+  ```
+
 ## Особенности:
 * Бот умеет работать как с упоминанием user-group, так и с упоминанием пользователей.
 * Чем больше пользователей в упомянутых группах / упомянуто => тем дольше придётся ждать ответа от бота.

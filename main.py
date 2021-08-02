@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 from dotenv import dotenv_values
