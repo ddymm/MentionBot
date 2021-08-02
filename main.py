@@ -24,7 +24,7 @@ def mention_event(client, body):
     ]
     mentioned_users = [obj["user_id"] for obj in event["blocks"][0]["elements"][0]["elements"] if obj["type"] == "user"]
 
-    if not mentioned_groups and len(mentioned_users) == 1:  # len(mentioned_users) == 1 ==> когда заменшнен только бот.
+    if not mentioned_groups and len(set(mentioned_users)) == 1:  # когда заменшнен только бот.
         return client.chat_postMessage(text="Некорректный запрос.", thread_ts=ts, channel=event["channel"])
 
     client.chat_postMessage(text="Собираю данные...", thread_ts=ts, channel=event["channel"])
