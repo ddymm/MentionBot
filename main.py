@@ -1,12 +1,12 @@
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
+from dotenv import dotenv_values
 
 
-APP_TOKEN = "xapp-*"
-BOT_TOKEN = "xoxb-*"
+config = dotenv_values(".env")
 
 
-app = App(token=BOT_TOKEN)
+app = App(token=config["BOT_TOKEN"])
 
 
 @app.event("app_mention")
@@ -48,4 +48,4 @@ def mention_event(client, body):
 
 
 if __name__ == "__main__":
-    SocketModeHandler(app, APP_TOKEN).start()
+    SocketModeHandler(app, config["APP_TOKEN"]).start()
