@@ -6,8 +6,9 @@
 * Создать [Slack App](https://api.slack.com/apps).
 * Установить бота в workspace.
 * В файле `main.py` переопределить значения `APP_TOKEN` токеном из раздела `App-Level Tokens`.
-* В разделе `Features -> OAuth & Permissions -> Scopes -> Bot Token Scopes` добавить следующие права боту:
-  * `app_mentions:read`
+* В разделе `Features -> OAuth & Permissions`:
+  * В `Scopes -> Bot Token Scopes` добавить следующие права боту:
+    * `app_mentions:read`
     * `chat:write`
     * `usergroups:read`
     * `users:read`
