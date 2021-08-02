@@ -6,15 +6,15 @@
 * Создать [Slack App](https://api.slack.com/apps).
 * Установить бота в workspace.
 * В файле `main.py` переопределить значения `APP_TOKEN` токеном из раздела `App-Level Tokens`.
-* В разделе `Features -> OAuth & Permissions`:
-  * В `Scopes -> Bot Token Scopes` добавить следующие права боту:
+* На странице `Features -> OAuth & Permissions`:
+  * В разделе `Scopes -> Bot Token Scopes` добавить следующие права боту:
     * `app_mentions:read`
     * `chat:write`
     * `usergroups:read`
     * `users:read`
     * `users:read.email`
   * В файле `main.py` переопределить значения `BOT_TOKEN` токеном из поля `Bot User OAuth Token` с этой страницы.
-* В разделе `Features -> Event Subscriptions`:
+* На странице `Features -> Event Subscriptions`:
   * Активировать чекбокс `Enable Events`.
   * В разделе `Subscribe to bot events` добавить ивент `app_mention`.
 
