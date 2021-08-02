@@ -5,7 +5,7 @@
 ## Первичная настройка:
 * Создать [Slack App](https://api.slack.com/apps).
 * Установить бота в workspace.
-* Переименовать файл `.env.template` -> `.env`
+* Создать файл `.env` в корне проекта, скопировать содержимое из `.env.template`.
 * В файле переопределить значения `APP_TOKEN` в `.env` токеном из раздела `App-Level Tokens`.
 * На странице `Features -> OAuth & Permissions`:
   * В разделе `Scopes -> Bot Token Scopes` добавить следующие права боту:

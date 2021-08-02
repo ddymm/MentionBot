@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
+from dotenv import dotenv_values
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
-from dotenv import dotenv_values
 
 
 config = dotenv_values(".env")
@@ -24,7 +24,7 @@ def mention_event(client, body):
     ]
     mentioned_users = [obj["user_id"] for obj in event["blocks"][0]["elements"][0]["elements"] if obj["type"] == "user"]
 
-    if not mentioned_groups and len(mentioned_users) == 1:  # len(mentioned_users) == 1 -> когда заменшнен только бот
+    if not mentioned_groups and len(mentioned_users) == 1:  # len(mentioned_users) == 1 ==> когда заменшнен только бот.
         return client.chat_postMessage(text="Некорректный запрос.", thread_ts=ts, channel=event["channel"])
 
     client.chat_postMessage(text="Собираю данные...", thread_ts=ts, channel=event["channel"])
@@ -40,7 +40,7 @@ def mention_event(client, body):
     # Получаем профили пользователей по id (приводим список к set -> не генерим лишние запросы к API).
     user_info_response_data = [client.users_info(user=user_id) for user_id in set(mentioned_users)]
 
-    # Достаём из профилей поле email (у пользователей-ботов этого поля нет, поэтому используем метод .get("key")).
+    # Достаём из профилей поле email (у пользователей-ботов его нет, поэтому используем метод .get("key")).
     email_list = [user["user"]["profile"].get("email") for user in user_info_response_data]
 
     # Готовим текст ответа от бота (фильтруем от None в случае с ботом, сортируем для красоты).
