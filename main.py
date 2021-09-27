@@ -3,6 +3,9 @@
 from dotenv import dotenv_values
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
+from slack_sdk.web import SlackResponse
+from slack_sdk.web.client import WebClient
+from typing import Dict, List, Text
 
 
 config = dotenv_values(".env")
@@ -11,42 +14,68 @@ config = dotenv_values(".env")
 app = App(token=config["BOT_TOKEN"])
 
 
-@app.event("app_mention")
-def mention_event(client, body):
-    event = body["event"]
+def _send_message(client: WebClient, data: Dict, text: Text) -> SlackResponse:
+    return client.chat_postMessage(text=text, **data)
 
-    # Хак, чтобы меншны работали и из каналов, и из тредов.
-    ts = event.get("thread_ts", event["event_ts"])
 
-    # Достаём списки заменшненых групп и пользователей из сообщения.
-    mentioned_groups = [
+def _get_data_from_message(event: Dict) -> Dict:
+    # Достаём списки заменшненых групп и пользователей из ивента-упоминания бота.
+
+    mentioned_users: List = [
+        obj["user_id"] for obj in event["blocks"][0]["elements"][0]["elements"] if obj["type"] == "user"
+    ]
+
+    mentioned_groups: List = [
         obj["usergroup_id"] for obj in event["blocks"][0]["elements"][0]["elements"] if obj["type"] == "usergroup"
     ]
-    mentioned_users = [obj["user_id"] for obj in event["blocks"][0]["elements"][0]["elements"] if obj["type"] == "user"]
 
-    if not mentioned_groups and len(set(mentioned_users)) == 1:  # когда заменшнен только бот.
-        return client.chat_postMessage(text="Некорректный запрос.", thread_ts=ts, channel=event["channel"])
+    return {"user_ids": list(set(mentioned_users)), "group_ids": list(set(mentioned_groups))}
 
-    client.chat_postMessage(text="Собираю данные...", thread_ts=ts, channel=event["channel"])
 
-    # Получаем списки пользователей каждой группы по id.
-    users_list_response_data = [client.usergroups_users_list(usergroup=group_id) for group_id in mentioned_groups]
+def _get_users_list_from_group(client: WebClient, group_id: Text) -> List[Text]:
+    # Достаём список пользователей из группы.
 
-    # Достаём id пользователей из списков групп и добавляем в список заменшных пользователей.
-    for group in users_list_response_data:
-        for user_id in group["users"]:
-            mentioned_users.append(user_id)
+    users_list_response_data = client.usergroups_users_list(usergroup=group_id)
 
-    # Получаем профили пользователей по id (приводим список к set -> не генерим лишние запросы к API).
-    user_info_response_data = [client.users_info(user=user_id) for user_id in set(mentioned_users)]
+    return users_list_response_data["users"]
 
-    # Достаём из профилей поле email (у пользователей-ботов его нет, поэтому используем метод .get("key")).
-    email_list = [user["user"]["profile"].get("email") for user in user_info_response_data]
+
+def _get_email_from_user(client: WebClient, user_id: Text) -> Text:
+    # Достаём поле email из профиля пользователя
+
+    # Получаем профиль пользователя по id.
+    user_info_response_data = client.users_info(user=user_id)
+
+    if not user_info_response_data["user"]["is_bot"]:
+        return user_info_response_data["user"]["profile"]["email"]
+
+
+@app.event("app_mention")
+def mention_event(client: WebClient, body: Dict) -> SlackResponse:
+    event: Dict = body["event"]
+
+    response_data: Dict = {
+        "thread_ts": event.get("thread_ts", event["event_ts"]),  # Хак, чтобы меншны работали и из каналов, и из тредов.
+        "channel": event["channel"],
+    }
+
+    data: Dict = _get_data_from_message(event)
+
+    if not data["group_ids"] and len(data["user_ids"]) == 1:  # когда заменшнен только бот.
+        return _send_message(client, response_data, text="Некорректный запрос.")
+
+    else:
+        _send_message(client, response_data, text="Собираю данные...")
+
+    for group_id in data["group_ids"]:
+        data["user_ids"] += _get_users_list_from_group(client, group_id)
+
+    email_list: List[Text] = [_get_email_from_user(client, user_id) for user_id in set(data["user_ids"])]
 
     # Готовим текст ответа от бота (фильтруем от None в случае с ботом, сортируем для красоты).
-    response_text = "\n".join(sorted(filter(None, email_list))) or "Не получилось найти :("
+    text: Text = "\n".join(sorted(filter(None, email_list))) or "Не получилось найти :("
 
-    return client.chat_postMessage(text=response_text, thread_ts=ts, channel=event["channel"])
+    return _send_message(client, response_data, text=text)
 
 
 if __name__ == "__main__":
