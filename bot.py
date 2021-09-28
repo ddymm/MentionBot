@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from typing import Any, Dict, List, Text
+from typing import Dict, List, Text, Union
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 from slack_sdk.web import SlackResponse
@@ -45,7 +45,7 @@ class MentionBot(object):
 
         return {"user_ids": user_ids, "group_ids": group_ids}
 
-    def get_users_list_from_group(self, group_id: Text) -> Any(List[Text], SlackResponse):
+    def get_users_list_from_group(self, group_id: Text) -> Union[List[Text], SlackResponse]:
         # Достаём список пользователей из группы.
 
         try:
@@ -56,7 +56,7 @@ class MentionBot(object):
 
         return users_list_response_data["users"]
 
-    def get_email_from_user(self, user_id: Text) -> Any(Text, SlackResponse):
+    def get_email_from_user(self, user_id: Text) -> Union[Text, SlackResponse]:
         # Достаём поле email из профиля пользователя
 
         try:
