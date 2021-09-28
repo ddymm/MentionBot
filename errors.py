@@ -8,7 +8,7 @@ KNOWN_API_ERRORS: Dict = {
 }
 
 
-class ApiError(Exception):
+class ApiError(BaseException):
     message: Text = "Неизвестная ошибка API :("
     error: Text = None
 
