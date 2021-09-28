@@ -3,7 +3,7 @@ from typing import Dict, List, Text, Union
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 from slack_sdk.web import SlackResponse
-from errors import KNOWN_API_ERRORS
+from errors import ApiError
 
 
 class MentionBot(object):
@@ -51,8 +51,7 @@ class MentionBot(object):
         try:
             users_list_response_data = self.client.usergroups_users_list(usergroup=group_id)
         except SlackApiError as api_error:
-            text = KNOWN_API_ERRORS.get(api_error.response["error"], "Неизвестная ошибка :(")
-            return self.client.chat_postMessage(text=text, **self.data)
+            raise ApiError(api_error).handle(self.client, self.data)
 
         return users_list_response_data["users"]
 
@@ -62,8 +61,7 @@ class MentionBot(object):
         try:
             user_info_response_data = self.client.users_info(user=user_id)
         except SlackApiError as api_error:
-            text = KNOWN_API_ERRORS.get(api_error.response["error"], "Неизвестная ошибка :(")
-            return self.client.chat_postMessage(text=text, **self.data)
+            raise ApiError(api_error).handle(self.client, self.data)
 
         if not user_info_response_data["user"]["is_bot"]:
             return user_info_response_data["user"]["profile"]["email"]
