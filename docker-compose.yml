@@ -1,0 +1,7 @@
+version: "3.3"
+services:
+  mention_bot:
+    container_name: mention_bot
+    build: .
+    command: python ./main.py
+    restart: always
