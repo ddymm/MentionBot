@@ -1,10 +1,9 @@
 - hosts: all
   tasks:
-    - name: Создание директории для бота
+    - name: Создание директории для репозитория
       file:
         path: "/home/{{ ansible_user }}/MentionBot"
         state: directory
-      tags: deploy
 
     - name: Выкачивание репозитория
       git:
@@ -12,23 +11,21 @@
         dest: "/home/{{ ansible_user }}/MentionBot"
         single_branch: yes
         version: master
-      tags: deploy
 
     - name: Копирование .env на удалённый сервер
       copy:
         src: ./../.env
         dest: "/home/{{ ansible_user }}/MentionBot/"
-      tags: deploy
 
     - name: Остановка контейнера
       docker_compose:
         project_src: "/home/{{ ansible_user }}/MentionBot"
         state: absent
-      tags: [deploy, restart]
+      tags: restart
 
     - name: Сборка и запуск контейнера
       docker_compose:
         project_src: "/home/{{ ansible_user }}/MentionBot"
         build: yes
       register: output
-      tags: [deploy, restart]
+      tags: restart
