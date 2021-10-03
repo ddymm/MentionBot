@@ -27,5 +27,4 @@
       docker_compose:
         project_src: "/home/{{ ansible_user }}/MentionBot"
         build: yes
-      register: output
       tags: restart
