@@ -3,5 +3,5 @@ services:
   mention_bot:
     container_name: mention_bot
     build: .
-    command: python ./main.py
+    command: python3 ./main.py
     restart: always
