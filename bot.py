@@ -23,10 +23,11 @@ class MentionBot(object):
         self.data = data
 
     def send_message(self, text: Text) -> SlackResponse:
+        # Отправка сообщения-ответа от бота.
         return self.client.chat_postMessage(text=text, **self.data)
 
-    def get_data_from_message(self, event: Dict) -> Dict:
-        # Достаём списки заменшненых групп и пользователей из ивента-упоминания бота.
+    def get_data_from_message(self, event: Dict) -> (List[Text], List[Text]):
+        # Достаём список id заменшненых групп и список id пользователей из ивента-упоминания бота.
 
         mentioned_users: List = [
             obj["user_id"] for obj in event["blocks"][0]["elements"][0]["elements"] if obj["type"] == "user"
@@ -43,10 +44,10 @@ class MentionBot(object):
         else:
             self.send_message(text="Собираю данные...")
 
-        return {"user_ids": user_ids, "group_ids": group_ids}
+        return user_ids, group_ids
 
     def get_users_list_from_group(self, group_id: Text) -> Union[List[Text], SlackResponse]:
-        # Достаём список пользователей из группы.
+        # Достаём список id пользователей из группы.
 
         try:
             users_list_response_data = self.client.usergroups_users_list(usergroup=group_id)
@@ -56,7 +57,7 @@ class MentionBot(object):
         return users_list_response_data["users"]
 
     def get_email_from_user(self, user_id: Text) -> Union[Text, SlackResponse]:
-        # Достаём поле email из профиля пользователя
+        # Достаём поле email из профиля пользователя.
 
         try:
             user_info_response_data = self.client.users_info(user=user_id)
