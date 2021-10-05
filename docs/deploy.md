@@ -7,7 +7,7 @@
 1. Установить **ansible**:
 
     ```bash
-    pip install -r requirements_dev.txt
+    pip install -r requirements_deploy.txt
     ```
 
 2. Создать файл `hosts.yml` в директории `./playbooks`, 
@@ -18,15 +18,20 @@
 
 ### Использование:
 
-Все команды выполняются **из-под директории playbooks**.
-
 * Деплой со сборкой и запуском бота:
 
     ```bash
     ansible-playbook -i playbooks/hosts.yml playbooks/deploy.yml
     ```
   
-* Перезапуск бота (остановка контейнера, сборка и запуск):
+* Простые действия можно выполнять с помощью запуска плейбука с указанием тега.
+Список доступных тегов:
+
+    * `stop` -> Остановка контейнера.
+    * `start` -> Сборка контейнера и запуск.
+    * `restart` -> Состоит из двух предыдущих шагов.
+
+    Пример использования:
 
     ```bash
     ansible-playbook -i playbooks/hosts.yml playbooks/deploy.yml --tags=restart

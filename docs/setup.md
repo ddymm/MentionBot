@@ -9,7 +9,7 @@
    ```bash  
    virtualenv /путь/до/репозитория/venv -p python3 # Python 3.6+ required
    source venv/bin/activate
-   pip install -r requirements.txt
+   pip install -r requirements_bot.txt
    ```
 
 2. Запуск:

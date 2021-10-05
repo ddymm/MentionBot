@@ -10,4 +10,4 @@ WORKDIR /home/bot_user/code
 COPY --chown=bot_user:bot_user . .
 
 # Установка зависимостей под созданным пользователем
-RUN pip install --user -r requirements.txt
+RUN pip install --user -r requirements_bot.txt
