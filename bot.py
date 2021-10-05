@@ -29,14 +29,14 @@ class MentionBot(object):
     def get_data_from_message(self, event: Dict) -> (List[Text], List[Text]):
         # Достаём список id заменшненых групп и список id пользователей из ивента-упоминания бота.
 
-        mentioned_users: List = [
+        user_ids: List[Text] = [
             obj["user_id"] for obj in event["blocks"][0]["elements"][0]["elements"] if obj["type"] == "user"
         ]
-        mentioned_groups: List = [
+        group_ids: List[Text] = [
             obj["usergroup_id"] for obj in event["blocks"][0]["elements"][0]["elements"] if obj["type"] == "usergroup"
         ]
 
-        user_ids, group_ids = list(set(mentioned_users)), list(set(mentioned_groups))
+        user_ids, group_ids = list(set(user_ids)), list(set(group_ids))
 
         if not group_ids and len(user_ids) == 1:  # когда заменшнен только бот.
             self.send_message(text="Некорректный запрос.")
@@ -46,22 +46,22 @@ class MentionBot(object):
 
         return user_ids, group_ids
 
-    def get_users_list_from_group(self, group_id: Text) -> Union[List[Text], SlackResponse]:
+    def get_users_list_from_group(self, group_id: Text) -> List[Text]:
         # Достаём список id пользователей из группы.
 
         try:
-            users_list_response_data = self.client.usergroups_users_list(usergroup=group_id)
-        except SlackApiError as api_error:
+            users_list_response_data: Dict = self.client.usergroups_users_list(usergroup=group_id)
+        except SlackApiError as api_error:  # Переоборачиваем ошибку API, что б послать читаемый ответ от бота.
             raise ApiError(api_error).handle(self.client, self.data)
 
         return users_list_response_data["users"]
 
-    def get_email_from_user(self, user_id: Text) -> Union[Text, SlackResponse]:
+    def get_email_from_user(self, user_id: Text) -> Text:
         # Достаём поле email из профиля пользователя.
 
         try:
-            user_info_response_data = self.client.users_info(user=user_id)
-        except SlackApiError as api_error:
+            user_info_response_data: Dict = self.client.users_info(user=user_id)
+        except SlackApiError as api_error:  # Переоборачиваем ошибку API, что б послать читаемый ответ от бота.
             raise ApiError(api_error).handle(self.client, self.data)
 
         if not user_info_response_data["user"]["is_bot"]:

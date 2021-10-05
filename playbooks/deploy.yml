@@ -15,16 +15,16 @@
     - name: Копирование .env на удалённый сервер
       copy:
         src: ./../.env
-        dest: "/home/{{ ansible_user }}/MentionBot/"
+        dest: "/home/{{ ansible_user }}/MentionBot"
 
     - name: Остановка контейнера
       docker_compose:
         project_src: "/home/{{ ansible_user }}/MentionBot"
         state: absent
-      tags: restart
+      tags: [restart, stop]
 
     - name: Сборка и запуск контейнера
       docker_compose:
         project_src: "/home/{{ ansible_user }}/MentionBot"
         build: yes
-      tags: restart
+      tags: [restart, start]

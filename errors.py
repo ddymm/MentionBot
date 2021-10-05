@@ -10,8 +10,8 @@ KNOWN_API_ERRORS: Dict = {
 
 
 class ApiError(BaseException):
-    message: Text = "Неизвестная ошибка API :("
     error: Text = None
+    message: Text = "Неизвестная ошибка API :("
 
     def __init__(self, api_error: SlackApiError):
         self.error = api_error.response["error"]
