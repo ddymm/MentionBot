@@ -11,8 +11,13 @@
     ```
 
 2. Создать файл `hosts.yml` в директории `./playbooks`, 
-скопировать содержимое из `hosts.yml.template`,
-переопределить параметрами своего хоста для деплоя.
+скопировать содержимое из `hosts.yml.template`:
+
+    ```bash
+    cp playbooks/hosts.yml.template playbooks/hosts.yml
+    ```
+
+4. Переопределить переменные своего хоста для деплоя.
 
 ---
 

@@ -15,7 +15,7 @@
 2. Запуск:
 
     ```bash  
-    ./venv/bin/python ./main.py
+    python3 ./main.py
     ```
 
 ---

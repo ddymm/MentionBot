@@ -13,7 +13,7 @@ APP = App(token=CONFIG["BOT_TOKEN"])
 
 
 @APP.event("app_mention")
-def handle(client: WebClient, body: Dict) -> SlackResponse:
+def handle_mention_event(client: WebClient, body: Dict) -> SlackResponse:
     bot = MentionBot(client, body)
 
     # Достаём список id заменшненых групп и список id пользователей из ивента-упоминания бота.

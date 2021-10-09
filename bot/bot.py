@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from typing import Dict, List, Text, Union
+from typing import Dict, List, Text
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 from slack_sdk.web import SlackResponse
-from errors import ApiError
+from .errors import ApiError
 
 
 class MentionBot(object):
@@ -50,9 +50,9 @@ class MentionBot(object):
         # Достаём список id пользователей из группы.
 
         try:
-            users_list_response_data: Dict = self.client.usergroups_users_list(usergroup=group_id)
+            users_list_response_data: SlackResponse = self.client.usergroups_users_list(usergroup=group_id)
         except SlackApiError as api_error:  # Переоборачиваем ошибку API, что б послать читаемый ответ от бота.
-            raise ApiError(api_error).handle(self.client, self.data)
+            raise ApiError(api_error, self.client, self.data)
 
         return users_list_response_data["users"]
 
@@ -60,9 +60,9 @@ class MentionBot(object):
         # Достаём поле email из профиля пользователя.
 
         try:
-            user_info_response_data: Dict = self.client.users_info(user=user_id)
+            user_info_response_data: SlackResponse = self.client.users_info(user=user_id)
         except SlackApiError as api_error:  # Переоборачиваем ошибку API, что б послать читаемый ответ от бота.
-            raise ApiError(api_error).handle(self.client, self.data)
+            raise ApiError(api_error, self.client, self.data)
 
         if not user_info_response_data["user"]["is_bot"]:
             return user_info_response_data["user"]["profile"]["email"]

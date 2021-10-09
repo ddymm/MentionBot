@@ -1,6 +1,6 @@
 all:
   hosts:
-    bot:
+    your_hostname:
       ansible_user: root
       ansible_host: host
-      ansible_ssh_private_key_file: /путь/до/сертификата.pem  # Если подключаемся без серта - поле удаляем
+      ansible_ssh_private_key_file: /путь/до/сертификата.pem (если подключаемся без серта - поле удаляем)
