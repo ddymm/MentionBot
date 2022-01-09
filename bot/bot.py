@@ -7,20 +7,16 @@ from .errors import ApiError
 
 
 class MentionBot(object):
-    client: WebClient = None
-    data: Dict = {}
-
     def __init__(self, client: WebClient, body: Dict):
+        self.client = client
+
         event: Dict = body["event"]
-        data: Dict = {
+        self.data: Dict = {
             "thread_ts": event.get(
                 "thread_ts", event["event_ts"]
             ),  # Хак, чтобы меншны работали и из каналов, и из тредов.
             "channel": event["channel"],
         }
-
-        self.client = client
-        self.data = data
 
     def send_message(self, text: Text) -> SlackResponse:
         # Отправка сообщения-ответа от бота.
