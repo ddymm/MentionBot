@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
 from typing import Dict, List, Text
-from dotenv import dotenv_values
+
 from slack_bolt import App
 from slack_bolt.adapter.socket_mode import SocketModeHandler
 from slack_sdk.web import SlackResponse
 from slack_sdk.web.client import WebClient
+
 from bot import MentionBot
+from config import CONFIG
 
 
-CONFIG = dotenv_values(".env")
-APP = App(token=CONFIG["BOT_TOKEN"])
+APP = App(token=CONFIG.bot_token)
 
 
 @APP.event("app_mention")
 def handle_mention_event(client: WebClient, body: Dict) -> SlackResponse:
+    """Обработка ивента-упоминания бота."""
+
     bot = MentionBot(client, body)
 
     # Достаём список id заменшненых групп и список id пользователей из ивента-упоминания бота.
@@ -33,4 +36,4 @@ def handle_mention_event(client: WebClient, body: Dict) -> SlackResponse:
 
 
 if __name__ == "__main__":
-    SocketModeHandler(APP, CONFIG["APP_TOKEN"]).start()
+    SocketModeHandler(APP, CONFIG.app_token).start()

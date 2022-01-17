@@ -1,3 +1,4 @@
 slack-bolt==1.7.0
 slack-sdk==3.8.0
 python-dotenv==0.18.0
+pydantic==1.9.0

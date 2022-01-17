@@ -1,6 +1,5 @@
 FROM python:3.8
 
-# PIPу не нравится установка зависимостей глобально -> просто создадим пользователя для запуска внутри контейнера
 RUN useradd -m bot_user
 USER bot_user
 ENV PATH="/home/bot_user/.local/bin:${PATH}"
